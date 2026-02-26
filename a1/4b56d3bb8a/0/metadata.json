@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.4.5",
+  "checkpoint_id": "a14b56d3bb8a",
+  "session_id": "c0c9acb9-1293-4cd3-b53b-55caee589e35",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-26T09:59:16.758469Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "postureguard.py"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "868c1ca67727",
+  "transcript_identifier_at_start": "badd390a-bc08-4118-b391-6387c2f3e866",
+  "token_usage": {
+    "input_tokens": 226,
+    "cache_creation_tokens": 43636,
+    "cache_read_tokens": 1207200,
+    "output_tokens": 5862,
+    "api_call_count": 33
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-26T09:59:16.433843Z",
+    "agent_lines": 175,
+    "human_added": 710,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 885,
+    "agent_percentage": 19.774011299435028
+  },
+  "transcript_path": ".claude/projects/-Users-janos-PostureGuard/c0c9acb9-1293-4cd3-b53b-55caee589e35.jsonl"
+}
