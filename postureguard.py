@@ -104,6 +104,7 @@ class PostureGuardApp(rumps.App):
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.current_sensitivity = 'medium'
         self._log_counter = 0
+        self._pending_ui = {}  # thread-safe UI updates
 
         # Menu items
         self.status_item = rumps.MenuItem("Status: Idle", callback=None)
@@ -142,6 +143,20 @@ class PostureGuardApp(rumps.App):
         # Auto-start if calibrated
         if self.baseline:
             self.start_monitoring()
+
+    @rumps.timer(0.5)
+    def _flush_ui(self, _):
+        """Apply pending UI updates on the main thread."""
+        pending = self._pending_ui
+        if not pending:
+            return
+        self._pending_ui = {}
+        if 'title' in pending:
+            self.title = pending['title']
+        if 'score' in pending:
+            self.score_item.title = pending['score']
+        if 'issues' in pending:
+            self.issues_item.title = pending['issues']
 
     def _get_thresholds(self):
         return SENSITIVITY_PRESETS[self.current_sensitivity]
@@ -333,20 +348,20 @@ class PostureGuardApp(rumps.App):
                         if self._log_counter % 6 == 0:
                             log_posture(smoothed, issues)
 
-                        # Update menu bar icon
+                        # Queue UI updates for the main thread
                         if smoothed > 80:
-                            self.title = "PG"
+                            ui_title = "PG"
                         elif smoothed > 50:
-                            self.title = "PG!"
+                            ui_title = "PG!"
                         else:
-                            self.title = "PG!!"
+                            ui_title = "PG!!"
 
-                        # Update menu items
-                        self.score_item.title = f"Score: {smoothed}%"
-                        if issues:
-                            self.issues_item.title = issues[0][0].split("—")[0].strip()
-                        else:
-                            self.issues_item.title = "Looking good!"
+                        ui_issues = issues[0][0].split("—")[0].strip() if issues else "Looking good!"
+                        self._pending_ui = {
+                            'title': ui_title,
+                            'score': f"Score: {smoothed}%",
+                            'issues': ui_issues,
+                        }
 
                         # Yell logic
                         now = time.time()
