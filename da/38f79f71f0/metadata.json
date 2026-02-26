@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.5",
+  "checkpoint_id": "da38f79f71f0",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "postureguard.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/da/38f79f71f0/0/metadata.json",
+      "transcript": "/da/38f79f71f0/0/full.jsonl",
+      "context": "/da/38f79f71f0/0/context.md",
+      "content_hash": "/da/38f79f71f0/0/content_hash.txt",
+      "prompt": "/da/38f79f71f0/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 258,
+    "cache_creation_tokens": 55249,
+    "cache_read_tokens": 2652320,
+    "output_tokens": 10460,
+    "api_call_count": 57
+  }
+}

@@ -1,0 +1,41 @@
+pull latest re ote branch snd tet local
+
+---
+
+isnt there supposed to be a log file now with csv?
+
+---
+
+i thought it is on the new branch?
+
+---
+
+merge it to main
+
+---
+
+yes push it
+
+---
+
+i think it just crased can you investigate
+
+---
+
+yes commit and push
+
+---
+
+it doesnt crashbut it doesnt shiw the camerea either
+
+---
+
+launch it
+
+---
+
+working
+
+---
+
+yes commit and push and tag as v2
