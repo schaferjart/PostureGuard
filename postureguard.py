@@ -157,6 +157,8 @@ class PostureGuardApp(rumps.App):
             self.score_item.title = pending['score']
         if 'issues' in pending:
             self.issues_item.title = pending['issues']
+        if 'camera_label' in pending:
+            self.camera_item.title = pending['camera_label']
 
     def _get_thresholds(self):
         return SENSITIVITY_PRESETS[self.current_sensitivity]
@@ -188,8 +190,29 @@ class PostureGuardApp(rumps.App):
             self.camera_item.title = "Show Camera"
         else:
             preview_script = os.path.join(self.script_dir, "camera_preview.py")
-            self.camera_proc = subprocess.Popen(["python3", preview_script])
+            if not os.path.exists(preview_script):
+                rumps.notification("PostureGuard", "Error", f"Camera preview not found: {preview_script}")
+                return
+            self.camera_proc = subprocess.Popen(
+                ["python3", preview_script],
+                stderr=subprocess.PIPE,
+            )
+            # Check if it died immediately
+            threading.Thread(target=self._watch_camera_proc, daemon=True).start()
             self.camera_item.title = "Hide Camera"
+
+    def _watch_camera_proc(self):
+        """Watch camera subprocess for early failure."""
+        proc = self.camera_proc
+        if proc is None:
+            return
+        proc.wait()
+        if proc.returncode != 0:
+            stderr = proc.stderr.read().decode(errors='replace').strip() if proc.stderr else ""
+            msg = stderr[-200:] if stderr else f"Exit code {proc.returncode}"
+            rumps.notification("PostureGuard", "Camera preview failed", msg)
+        self.camera_proc = None
+        self._pending_ui['camera_label'] = "Show Camera"
 
     def toggle_monitoring(self, _):
         if self.monitoring:
