@@ -45,6 +45,7 @@ posture_core.py          ← shared constants, detection logic, calibration I/O
 ```
 Main Thread (rumps event loop)
 ├── Menu bar UI and user interactions
+├── _flush_ui timer (0.5s) — applies queued UI updates from _pending_ui
 ├── Spawns background monitoring thread
 └── Spawns camera preview as separate subprocess
 
@@ -52,7 +53,7 @@ Background Thread (_monitor_loop)
 ├── Camera capture every 0.5s
 ├── MediaPipe pose + face detection
 ├── Metric extraction and baseline comparison
-├── Menu bar title/item updates
+├── Queues UI updates via self._pending_ui dict (NEVER set UI directly)
 ├── Voice alert triggering
 └── Posture session logging (every ~3s)
 
@@ -140,6 +141,7 @@ Tests only exercise pure logic functions and do **not** require MediaPipe, OpenC
 - **macOS only:** `rumps`, `say` command, and py2app are all macOS-specific. Do not introduce cross-platform abstractions unless explicitly requested.
 - **Privacy-first:** Calibration stores landmark ratios only, never images or video. Session logs store scores and issue labels only. Do not change this.
 - **No dock icon:** `LSUIElement: True` in setup.py keeps the app out of the Dock.
+- **AppKit threading:** NEVER set menu item titles or `self.title` from a background thread. This causes SIGSEGV in `HIStandardMenuView::ResolveMenuFont`. Always write to `self._pending_ui` dict and let the `_flush_ui` rumps.timer apply changes on the main thread.
 - **Camera preview is a subprocess:** Do not merge it into the main process. macOS OpenCV window requirements conflict with rumps.
 - **Single source of truth:** All detection logic lives in `posture_core.py`. Do not duplicate logic between files.
 
@@ -156,3 +158,10 @@ Tests only exercise pure logic functions and do **not** require MediaPipe, OpenC
 |------|----------|----------|
 | `posture_calibration.json` | `~/` | Averaged metric values from good posture calibration |
 | `posture_log.csv` | `~/PostureGuard/` | Timestamped posture scores and issue labels |
+
+## Releases
+
+| Tag | Commit | Description |
+|-----|--------|-------------|
+| `v1` | `68879eb` | Initial commit: core posture monitoring |
+| `v2` | `68f03e8` | Extracted shared module, CSV logging, tests, thread-safe UI fix |
