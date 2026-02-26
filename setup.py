@@ -11,18 +11,22 @@ OPTIONS = {
         'CFBundleName': 'PostureGuard',
         'CFBundleDisplayName': 'PostureGuard',
         'CFBundleIdentifier': 'com.postureguard.app',
-        'CFBundleVersion': '1.0.0',
-        'CFBundleShortVersionString': '1.0.0',
+        'CFBundleVersion': '1.1.0',
+        'CFBundleShortVersionString': '1.1.0',
         'LSUIElement': True,  # No dock icon!
         'NSCameraUsageDescription': 'PostureGuard needs camera access to monitor your posture.',
     },
     'packages': ['cv2', 'mediapipe', 'numpy', 'rumps', 'google'],
-    'includes': ['mediapipe.python.solutions.pose', 'mediapipe.python.solutions.face_mesh'],
+    'includes': ['mediapipe.python.solutions.pose', 'mediapipe.python.solutions.face_mesh',
+                  'posture_core'],
 }
+
+DATA_FILES = ['camera_preview.py', 'posture_core.py']
 
 setup(
     app=APP,
     name='PostureGuard',
+    data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
